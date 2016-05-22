@@ -1,4 +1,4 @@
-# Localizer-Extension
+# Localizer Extension
 Visual Studio extension to localize C# WPF projects without the use of any external .dll
 
 ## Important note
