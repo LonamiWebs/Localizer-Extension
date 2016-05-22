@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+  <Metadata>
+    <Identity Id="Localizer_Extension.Lonami.6ea50667-a9f3-446d-83ab-61ffa85a636b" Version="1.2.1" Language="en-UK" Publisher="Lonami" />
+    <DisplayName>Localizer Extension</DisplayName>
+    <Description xml:space="preserve">
+      Extract string resources from C# source files and from .xaml files.
+      This extension is intended to be used under C# WPF projects only.
+    </Description>
+    <License>LICENSE.md.txt</License>
+    <GettingStartedGuide>README.html</GettingStartedGuide>
+    <Icon>CommandsPackage.ico</Icon>
+    <PreviewImage>icon.png</PreviewImage>
+    <Tags>localize, localization, translation, strings, resources, manager, wpf</Tags>
+  </Metadata>
+  <Installation>
+    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
+  </Installation>
+  <Dependencies>
+    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" d:Source="Installed" Version="[14.0]" />
+  </Dependencies>
+  <Assets>
+    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+  </Assets>
+</PackageManifest>

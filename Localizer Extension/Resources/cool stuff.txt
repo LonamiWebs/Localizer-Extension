@@ -1,0 +1,128 @@
+﻿╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
+║ if you want to show a mbox:																						║
+║     VsShellUtilities.ShowMessageBox(...);																			║
+║                                                                                                                   ║
+╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║ to add a hidden button:                                                                                           ║
+║                                                                                                                   ║
+║       <Button guid="guidCommandsPackageCmdSet" id="ExtractStringCmdId" priority="0x0100" type="Button">         ║
+║         <Parent guid="guidCommandsPackageCmdSet" id="MyMenuGroup" />                                         ║
+║         <Icon guid="guidImages" id="bmpPic1" />                                                                   ║
+║         <CommandFlag>DefaultInvisible</CommandFlag>                                                               ║
+║         <CommandFlag>DynamicVisibility</CommandFlag>                                                              ║
+║         <Strings>                                                                                                 ║
+║           <ButtonText>Extract string</ButtonText>                                                                 ║
+║         </Strings>                                                                                                ║
+║       </Button>                                                                                                   ║
+║                                                                                                                   ║
+╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║ if you want the command to be in the editor use:                                                                  ║
+║                                                                                                                   ║
+║       <Group guid="guidCommandsPackageCmdSet" id="MyMenuGroup" priority="0x0600">                            ║
+║         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>                                                 ║
+║       </Group>                                                                                                    ║
+║                                                                                                                   ║
+╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║ in order to add files to the project:																				║
+║ 																													║
+║       DTE dte = (DTE)ServiceProvider.GetService(typeof(DTE));														║
+║       dte.ItemOperations.NewFile(@"General\Visual C# Class", "ObjectOne", EnvDTE.Constants.vsViewKindTextView);	║
+║ 	  	 																											║
+║       TextSelection txtSel = (TextSelection)dte.ActiveDocument.Selection;											║
+║       TextDocument txtDoc = (TextDocument)dte.ActiveDocument.Object("");											║
+║ 	  	 																											║
+║       txtSel.SelectAll();																							║
+║       txtSel.Delete();																							║
+║       txtSel.Insert("Hello World");																				║
+║																													║
+║ or even																											║
+║ 		dte.ItemOperations.AddExistingItem("path to file");															║
+║		dte.ItemOperations.AddNewItem(@"General\Text File", "res\\strings.xml");			                		║
+║                                        																			║
+╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║ in order to add a file or folder or crazy stuff lol:																║
+║ 																													║
+║        DTE dte = (DTE)ServiceProvider.GetService(typeof(DTE));													║
+║        //string solutionDir = Path.GetDirectoryName(dte.Solution.FullName);										║
+║ 																													║
+║        var containingProject = dte.ActiveDocument.ProjectItem.ContainingProject;									║
+║        var projectItems = containingProject.ProjectItems;															║
+║ 																													║
+║        var resFolder = Path.Combine(Path.GetDirectoryName(containingProject.FullName), "res");					║
+║ 																													║
+║        if (!Directory.Exists(resFolder)) // todo; or perhaps the folder exists and it's not added!				║
+║            projectItems.AddFolder("res");																			║
+║                                        																			║
+╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣
+║ has the user selected ONLY one file in the solution explorer??:													║
+║ 																													║
+║     public static bool IsSingleProjectItemSelection(out IVsHierarchy hierarchy, out uint itemid)					║
+║     {																												║
+║         hierarchy = null;																							║
+║         itemid = VSConstants.VSITEMID_NIL;																		║
+║         int hr = VSConstants.S_OK;																				║
+║ 																													║
+║         var monitorSelection = Package.GetGlobalService(typeof(SVsShellMonitorSelection))							║
+║                                    as IVsMonitorSelection;														║
+║         var solution = Package.GetGlobalService(typeof(SVsSolution)) as IVsSolution;								║
+║         if (monitorSelection == null || solution == null)															║
+║         {																											║
+║             return false;																							║
+║         }																											║
+║ 																													║
+║         IVsMultiItemSelect multiItemSelect = null;																║
+║         IntPtr hierarchyPtr = IntPtr.Zero;																		║
+║         IntPtr selectionContainerPtr = IntPtr.Zero;																║
+║ 																													║
+║         string[] projs = new string[5]; // i can set any number lol, n = projects in solution but idk n			║
+║         uint projsFetched;																						║
+║         solution.GetProjectFilesInSolution(0, 5, projs, out projsFetched);										║
+║         																											║
+║ 																													║
+║         try																										║
+║         {																											║
+║             hr = monitorSelection.GetCurrentSelection(out hierarchyPtr, out itemid,								║
+║				out multiItemSelect, out selectionContainerPtr);													║
+║ 																													║
+║             if (ErrorHandler.Failed(hr) || hierarchyPtr == IntPtr.Zero || itemid == VSConstants.VSITEMID_NIL)		║
+║             {																										║
+║                 // there is no selection																			║
+║                 return false;																						║
+║             }																										║
+║ 																													║
+║             // multiple items are selected																		║
+║             if (multiItemSelect != null) return false;															║
+║ 																													║
+║             // there is a hierarchy root node selected, thus it is not a single item inside a project				║
+║             if (itemid == VSConstants.VSITEMID_ROOT) return false;												║
+║ 																													║
+║             hierarchy = Marshal.GetObjectForIUnknown(hierarchyPtr) as IVsHierarchy;								║
+║             if (hierarchy == null) return false;																	║
+║ 																													║
+║             Guid guidProjectID = Guid.Empty;																		║
+║             if (ErrorHandler.Failed(solution.GetGuidOfProject(hierarchy, out guidProjectID)))						║
+║             {																										║
+║    		  // hierarchy is not a project inside the Solution if it does not have a ProjectID Guid				║
+║                 return false; 																					║
+║             }																										║
+║ 																													║
+║             // if we got this far then there is a single project item selected									║
+║             return true;																							║
+║         }																											║
+║         finally																									║
+║         {																											║
+║             if (selectionContainerPtr != IntPtr.Zero)																║
+║             {																										║
+║                 Marshal.Release(selectionContainerPtr);															║
+║             }																										║
+║ 																													║
+║             if (hierarchyPtr != IntPtr.Zero)																		║
+║             {																										║
+║                 Marshal.Release(hierarchyPtr);																	║
+║             }																										║
+║         }																											║
+║     }																												║
+╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+ > more cool stuff http://stackoverflow.com/questions/13374282/enumerate-all-files-in-current-visual-studio-project <
+ > and more more!: http://www.diaryofaninja.com/blog/2014/02/18/who-said-building-visual-studio-extensions-was-hard <

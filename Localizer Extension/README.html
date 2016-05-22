@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untitled Document.md</title>
+    <style>
+        h1, h2, h3, p {
+            font-family: "Source Sans Pro","Helvetica Neue",Helvetica,Arial,sans-serif;
+        }
+        code {
+            font-family: monospace;
+            color: #C7254E;
+            background-color: #F9F2F4;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body id="preview">
+    <h1><a id="Localizer_Extension_0"></a>Localizer Extension</h1>
+    <p>Localizer Extension is a simple Visual Studio extension that allows you to extract string resources from C# source files and from .xaml files.</p>
+    <p>This extension is intended to be used under C# WPF projects only.</p>
+    <h2><a id="Installation_5"></a>Installation</h2>
+    <p>Simply download the extension and install it. After installed, the extension will become available in Visual Studio.</p>
+    <h2><a id="Getting_started_8"></a>Getting started</h2>
+    <h3><a id="First_steps_9"></a>First steps</h3>
+    <p>To use this extension, simply right click on any string <code>string test = &quot;right click here&quot;</code> in a <code>.cs</code> file or on <code>Text=&quot;right click here&quot;</code> in a <code>.xaml</code> file. A message box will be prompted to input a name for the resource. After clicking <em>accept</em> the resource will be extracted to <code>res/Strings.xaml</code>. This file can be modified manually.</p>
+    <h3><a id="Managing_translations_11"></a>Managing translations</h3>
+    <p>Under the <code>Project</code> Visual Studio menu you will find a new entry called <code>Manage strings resources</code>. Click it, and a new window will appear. In this window you can:</p>
+    <ul>
+    <li>Add new locales (such as es-ES, en-UK, etc)</li>
+    <li>Delete existing locales (the <code>String.ll-CC.xaml</code> resource files will be removed from disk)</li>
+    <li>Add a custom resources file, which can include images and other files. Must be edited manually.</li>
+    </ul>
+    <p>In this window you will also be able to open the <code>Settings</code> window which allows you to change some stuff such as how the resources folder is called or how the resources class is called.</p>
+    <h2><a id="License_19"></a>License</h2>
+    <p>This project is licensed under the DBAD license</p>
+</body>
+</html>
